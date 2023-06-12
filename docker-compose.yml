@@ -1,0 +1,68 @@
+version: '3.4'
+
+services:
+  consolidate.api:
+    image: ${DOCKER_REGISTRY-}consolidateapi
+    container_name: 'consolidate-api'
+    build:
+      context: .
+      dockerfile: Consolidate.Api/Dockerfile
+
+  transactions.api:
+    image: ${DOCKER_REGISTRY-}transactionsapi
+    container_name: 'transactions-api'
+    build:
+      context: .
+      dockerfile: Transactions.Api/Dockerfile
+
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    container_name: 'rabbitmq2'
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  mongodb:
+    image: mongo
+    container_name: 'mongodb-consolidate'
+    restart: always
+    ports:
+        - 27017:27017
+    environment:
+        - MONGO_INITDB_ROOT_USERNAME=admin
+        - MONGO_INITDB_ROOT_PASSWORD=secretpassword
+    volumes:
+        - mongodb_data:/data/db
+  jaeger: 
+    image: jaegertracing/all-in-one:latest
+    container_name: 'jaeger-trace'
+    ports:
+        - "5775:5775/udp"
+        - "6831:6831/udp"
+        - "6832:6832/udp"
+        - "5778:5778"
+        - "16686:16686"
+        - "14268:14268"
+        - "9411:9411"
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.1
+    container_name: 'elasticsearch-log'
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.11.1
+    ports:
+      - "5601:5601"
+
+    depends_on:
+      - elasticsearch
+
+volumes:
+  mongodb_data:
+    
