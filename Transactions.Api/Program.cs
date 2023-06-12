@@ -1,12 +1,9 @@
-using Foundation.Business.Data;
 using Foundation.Business.DomainNotitications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Transactions.Business.Contracts;
 using Transactions.Business.UseCase;
-using Transactions.Data.Context;
 using Transactions.Data.Repository;
-using Microsoft.EntityFrameworkCore;
 using MassTransit;
 using Foundation.Business.BehaviorHandlers;
 using Extensions.OpenTelemetry;
@@ -14,6 +11,9 @@ using Foundation.Settings;
 using Extensions.Log;
 using Extensions.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Transactions.Data.Mapping;
+using Extensions.Extensions.MongoDb;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +38,8 @@ builder.Services
             {
                 x.UsingRabbitMq((ctx, cfg) =>
                 {
-                    cfg.Host("rabbitmq2", "/", h => {
+                    cfg.Host("rabbitmq2", "/", h =>
+                    {
                         h.Username("guest");
                         h.Password("guest");
                     });
@@ -50,10 +51,15 @@ builder.Services
                 cfg.RegisterServicesFromAssemblies(typeof(TransactionInputDto).Assembly, typeof(AddTransactionUseCase).Assembly);
             })
             .AddScoped<DomainNotificationContext, TransactionDomainNotificationContext>()
-            .AddScoped<ITransactionRepository, TransactionRepository>()
-            .AddScoped<IUnitOfWork, UnitOfWork>()
             .AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>))
-            .AddDbContext<Transactions.Data.Context.TransactionContext>(opt => opt.UseInMemoryDatabase("InMemoryTransactionDb"));
+            .AddMongoDb(appSettings)
+            .AddAutoMapper(typeof(MappingProfile))
+            .AddScoped<ITransactionRepository, TransactionMongoRepository>()                        
+            .AddScoped<IMongoDatabase>(provider =>
+            {
+                var client = provider.GetService<IMongoClient>();
+                return client.GetDatabase("Transaction");
+            });
 
 
 var app = builder.Build();
@@ -64,6 +70,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider
+//        .GetRequiredService<Transactions.Data.Context.TransactionContext>();
+
+//    // Here is the migration executed
+//    dbContext.Database.Migrate();
+//}
 
 app.UseHttpsRedirection();
 

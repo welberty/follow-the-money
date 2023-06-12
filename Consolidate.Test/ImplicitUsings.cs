@@ -27,7 +27,7 @@ namespace Consolidate.Test
             .AddScoped<IMongoDatabase>(provider =>
             {
                 var client = provider.GetService<IMongoClient>();
-                return client.GetDatabase("Consolidate");
+                return client.GetDatabase("Transaction");
             });
 
             services.AddMediatR(cfg =>

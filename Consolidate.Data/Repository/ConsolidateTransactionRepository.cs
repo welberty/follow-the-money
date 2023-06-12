@@ -11,12 +11,10 @@ namespace Consolidate.Data.Repository
 {
     public class ConsolidateTransactionRepository : IConsolidateTransactionRepository
     {
-        //private readonly ConnectionMultiplexer _redis;
         private readonly IDatabase _database;
 
         public ConsolidateTransactionRepository(IDatabase database)
         {
-            //_redis = ConnectionMultiplexer.Connect(redisSettings.Value.ConnectionString);
             _database = database;
         }
 

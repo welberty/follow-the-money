@@ -1,6 +1,5 @@
 ﻿using Consolidate.Business.Contracts;
 using Consolidate.Business.Model;
-using Foundation.Business.Data;
 using Foundation.Business.DomainEvents;
 using Foundation.Business.DomainNotitications;
 using MassTransit;

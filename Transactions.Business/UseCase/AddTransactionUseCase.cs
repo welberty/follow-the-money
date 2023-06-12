@@ -1,5 +1,4 @@
-﻿using Foundation.Business.Data;
-using Foundation.Business.DomainNotitications;
+﻿using Foundation.Business.DomainNotitications;
 using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -13,20 +12,17 @@ namespace Transactions.Business.UseCase
         private readonly ILogger<AddTransactionUseCase> _logger;
         private readonly DomainNotificationContext domainNotificaionContext;
         private readonly ITransactionRepository transactionRepository;
-        private readonly IUnitOfWork unitOfWork;
         private readonly IBus bus;
 
         public AddTransactionUseCase(
             ILogger<AddTransactionUseCase> logger,
             DomainNotificationContext domainNotificaionContext, 
             ITransactionRepository transactionRepository,
-            IUnitOfWork unitOfWork, 
             IBus bus)
         {
             _logger = logger;
             this.domainNotificaionContext = domainNotificaionContext;
             this.transactionRepository = transactionRepository;
-            this.unitOfWork = unitOfWork;
             this.bus = bus;
         }
 
@@ -48,7 +44,6 @@ namespace Transactions.Business.UseCase
                 }
 
                 await transactionRepository.Save(transaction, cancellationToken);
-                await unitOfWork.Commit(cancellationToken);
                 await bus.Publish(@event);
             }
             catch (Exception e)
