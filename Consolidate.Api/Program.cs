@@ -90,7 +90,7 @@ app.UseAuthorization();
 
 app.MapLogin(appSettings);
 
-app.MapGet("/consolidate", [Authorize] async (
+app.MapGet("/consolidate",  async (
     [FromQuery] DateTime Date,
     IMediator mediator,
     DomainNotificationContext domainNotificaionContext,

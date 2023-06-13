@@ -82,7 +82,7 @@ app.UseAuthorization();
 
 app.MapLogin(appSettings);
 
-app.MapPost("/transaction/add", [Authorize]  async (
+app.MapPost("/transaction/add",  async (
     [FromBody] TransactionInputDto input,
     IMediator mediator,
     DomainNotificationContext domainNotificaionContext,
