@@ -101,6 +101,3 @@ app.MapGet("/consolidate", [Authorize] async (
 .WithOpenApi();
 
 app.Run();
-
-
-record UserDto(string UserName, string Password);

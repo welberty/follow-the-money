@@ -2,47 +2,10 @@
 using Consolidate.Business.Contracts;
 using Consolidate.Business.Model;
 using Consolidate.Data.Mapping;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Newtonsoft.Json;
-using StackExchange.Redis;
 
 namespace Consolidate.Data.Repository
 {
-    public class ConsolidateTransactionRepository : IConsolidateTransactionRepository
-    {
-        private readonly IDatabase _database;
-
-        public ConsolidateTransactionRepository(IDatabase database)
-        {
-            _database = database;
-        }
-
-        public Task Create(ConsolidateTransaction consolidateTransaction, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<ConsolidateTransaction?> Get(DateOnly date, CancellationToken cancellationToken)
-        {
-            var redisValue = await _database.StringGetAsync(date.ToString());
-            
-            if(redisValue.IsNull) 
-            {
-                return null;
-            }
-
-            var consolidate = JsonConvert.DeserializeObject<ConsolidateTransaction>(redisValue.ToString());
-            return consolidate;
-
-        }
-
-        public async Task Save(ConsolidateTransaction consolidateTransaction, CancellationToken cancellationToken)
-        {
-            await _database.StringSetAsync(consolidateTransaction.Date.ToString(), JsonConvert.SerializeObject(consolidateTransaction));            
-        }
-    }
-
     public class ConsolidateTransactionMongoRepository : IConsolidateTransactionRepository
     {
         private readonly IMongoDatabase _mongoDatabase;
