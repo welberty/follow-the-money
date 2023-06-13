@@ -16,7 +16,7 @@ namespace Extensions.HealthCheck
 
         public static void UsePrometheusHealthChecks(this WebApplication app)
         {
-            app.UseHealthChecksPrometheusExporter("/my-health-metrics");
+            app.UseHealthChecksPrometheusExporter("/_health-metrics");
 
         }
     }
