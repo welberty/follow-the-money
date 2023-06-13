@@ -12,9 +12,11 @@ using MongoDB.Driver;
 using Extensions.Extensions.MongoDb;
 using Extensions.Log;
 using Extensions.Authentication;
+using Extensions.HealthCheck;
 using Foundation.Settings;
 using Foundation.Business.BehaviorHandlers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +37,7 @@ builder.AddSerilog();
 builder.Services
     .AddAuthentication(appSettings)
     .AddOpenTelemetry(appSettings)
+    .AddHealthChecks(appSettings)
     .AddMediatR(cfg =>
     {
         cfg.RegisterServicesFromAssemblies(
@@ -77,6 +80,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UsePrometheusHealthChecks();
 
 app.UseHttpsRedirection();
 

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Transactions.Data.Mapping;
 using Extensions.Extensions.MongoDb;
 using MongoDB.Driver;
+using Extensions.HealthCheck;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,14 +35,15 @@ builder.AddSerilog();
 builder.Services
             .AddAuthentication(appSettings)
             .AddOpenTelemetry(appSettings)
+            .AddHealthChecks(appSettings)
             .AddMassTransit(x =>
             {
                 x.UsingRabbitMq((ctx, cfg) =>
                 {
-                    cfg.Host("rabbitmq2", "/", h =>
+                    cfg.Host(appSettings.MessageBroker.Host, "/", h =>
                     {
-                        h.Username("guest");
-                        h.Password("guest");
+                        h.Username(appSettings.MessageBroker.User);
+                        h.Password(appSettings.MessageBroker.Password);
                     });
                     cfg.ConfigureEndpoints(ctx);
                 });
@@ -70,6 +72,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UsePrometheusHealthChecks();
 
 app.UseHttpsRedirection();
 

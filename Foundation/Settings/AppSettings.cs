@@ -6,6 +6,7 @@
         public string MongoUrl { get; set; }
         public DistributedTracingOptions DistributedTracing { get; set; }
         public Jwt Jwt { get; set; }
+        public MessageBroker MessageBroker { get; set; }
     }
 
     public class DistributedTracingOptions
@@ -22,4 +23,6 @@
     }
 
     public record Jwt(string Issuer, string Audience, string Key);
+
+    public record MessageBroker(string Host, string User, string Password);
 }
