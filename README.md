@@ -74,7 +74,7 @@ E clique no link como indicado na imagem
 
 Para executar os endpoints basta clicar nesse botão:
 
-[![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=FollowTheMoney&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fwelberty%2Ffolow-the-money%2Fversao-2%2Fcollection.json)
+[![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=FollowTheMoney%20Collection&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fwelberty%2Ffolow-the-money%2Fmain%2Fcollection.har)
 
 Abaixo segue os links dos serviços de monitoramento e observabilidade:
 
